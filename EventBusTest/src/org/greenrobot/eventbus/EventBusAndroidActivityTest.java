@@ -53,8 +53,10 @@ public class EventBusAndroidActivityTest extends AbstractEventBusTest {
         eventBus.register(testActivity);
         long time = System.currentTimeMillis() - start;
         Log.d(EventBus.TAG, "Registered in " + time + "ms");
+        Log.d(EventBus.TAG, "testRegisterAndPost() testActivity.lastStringEvent:" + testActivity.lastStringEvent);
 
         eventBus.post(event);
+        Log.d(EventBus.TAG, "testRegisterAndPost() after post testActivity.lastStringEvent:" + testActivity.lastStringEvent);
 
         assertEquals(event, testActivity.lastStringEvent);
     }
