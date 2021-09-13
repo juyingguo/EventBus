@@ -16,6 +16,7 @@
 package org.greenrobot.eventbus;
 
 import android.os.Looper;
+import android.util.Log;
 
 import org.junit.Test;
 
@@ -27,6 +28,10 @@ import static org.junit.Assert.assertFalse;
  */
 public class EventBusBackgroundThreadTest extends AbstractAndroidEventBusTest {
 
+    private String TAG = "EventBusBackgroundThreadTest";
+    public EventBusBackgroundThreadTest() {
+        Log.d(TAG,"EventBusBackgroundThreadTest() constructor call.");
+    }
     @Test
     public void testPostInCurrentThread() throws InterruptedException {
         eventBus.register(this);
@@ -41,6 +46,7 @@ public class EventBusBackgroundThreadTest extends AbstractAndroidEventBusTest {
     public void testPostFromMain() throws InterruptedException {
         eventBus.register(this);
         postInMainThread("Hello");
+        //eventCount.set(2); for test waitForEventCount
         waitForEventCount(1, 1000);
         assertEquals("Hello", lastEvent);
         assertFalse(lastThread.equals(Thread.currentThread()));
@@ -49,6 +55,7 @@ public class EventBusBackgroundThreadTest extends AbstractAndroidEventBusTest {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onEventBackgroundThread(String event) {
+        Log.d("EventBusBackgroundThreadTest","onEventBackgroundThread event:" + event);
         trackEvent(event);
     }
 

@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertFalse;
  */
 @RunWith(AndroidJUnit4.class)
 public abstract class AbstractAndroidEventBusTest extends AbstractEventBusTest {
+    private String TAG = "AbstractAndroidEventBusTest";
     private EventPostHandler mainPoster;
 
     public AbstractAndroidEventBusTest() {
@@ -40,10 +42,12 @@ public abstract class AbstractAndroidEventBusTest extends AbstractEventBusTest {
 
     public AbstractAndroidEventBusTest(boolean collectEventsReceived) {
         super(collectEventsReceived);
+        Log.d(TAG,"AbstractAndroidEventBusTest(p) constructor call,param:"+ collectEventsReceived);
     }
 
     @Before
     public void setUpAndroid() throws Exception {
+        Log.d(TAG,"setUpAndroid() run before test");
         mainPoster = new EventPostHandler(Looper.getMainLooper());
         assertFalse(Looper.getMainLooper().getThread().equals(Thread.currentThread()));
     }
