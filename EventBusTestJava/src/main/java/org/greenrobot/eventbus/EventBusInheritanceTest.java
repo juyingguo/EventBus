@@ -35,7 +35,8 @@ public class EventBusInheritanceTest {
 
     @Before
     public void setUp() throws Exception {
-        eventBus = new EventBus();
+//        eventBus = new EventBus();
+        eventBus = EventBus.builder().eventInheritance(true).build();
     }
 
     @Test
@@ -61,9 +62,16 @@ public class EventBusInheritanceTest {
         eventBus.postSticky(new MyEvent());
         eventBus.postSticky(new MyEventExtended());
         eventBus.register(new StickySubscriber());
+
+        //eventInheritance=true
         assertEquals(1, countMyEventExtended);
         assertEquals(2, countMyEvent);
         assertEquals(3, countObjectEvent);
+
+        //eventInheritance=false
+        /*assertEquals(1, countMyEventExtended);
+        assertEquals(1, countMyEvent);
+        assertEquals(0, countObjectEvent);*/
     }
 
     @Test
