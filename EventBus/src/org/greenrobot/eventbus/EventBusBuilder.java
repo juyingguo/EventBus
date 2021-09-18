@@ -41,6 +41,8 @@ public class EventBusBuilder {
     boolean eventInheritance = true;
     boolean ignoreGeneratedIndex;
     boolean strictMethodVerification;
+    /** debug print switch */
+    boolean printEventBus;
     ExecutorService executorService = DEFAULT_EXECUTOR_SERVICE;
     List<Class<?>> skipMethodVerificationForClasses;
     List<SubscriberInfoIndex> subscriberInfoIndexes;
@@ -131,6 +133,10 @@ public class EventBusBuilder {
     /** Enables strict method verification (default: false). */
     public EventBusBuilder strictMethodVerification(boolean strictMethodVerification) {
         this.strictMethodVerification = strictMethodVerification;
+        return this;
+    }
+    public EventBusBuilder printEventBus(boolean printEventBus) {
+        this.printEventBus = printEventBus;
         return this;
     }
 

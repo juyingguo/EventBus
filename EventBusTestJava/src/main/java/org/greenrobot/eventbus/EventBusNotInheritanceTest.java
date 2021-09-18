@@ -21,9 +21,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author Markus Junginger, greenrobot
+ * @author jy.eink
  */
-public class EventBusInheritanceTest {
+public class EventBusNotInheritanceTest {
 
     protected EventBus eventBus;
 
@@ -36,7 +36,7 @@ public class EventBusInheritanceTest {
     @Before
     public void setUp() throws Exception {
 //        eventBus = new EventBus();
-        eventBus = EventBus.builder().eventInheritance(true)
+        eventBus = EventBus.builder().eventInheritance(false)
                     .printEventBus(true).build();
     }
 
@@ -47,14 +47,14 @@ public class EventBusInheritanceTest {
         eventBus.post("Hello");
         assertEquals(1, countObjectEvent);
 
-//        eventBus.post(new MyEvent());
-//        assertEquals(2, countObjectEvent);
-//        assertEquals(1, countMyEvent);
-//
-//        eventBus.post(new MyEventExtended());
-//        assertEquals(3, countObjectEvent);
-//        assertEquals(2, countMyEvent);
-//        assertEquals(1, countMyEventExtended);
+        eventBus.post(new MyEvent());
+        assertEquals(2, countObjectEvent);
+        assertEquals(1, countMyEvent);
+
+        eventBus.post(new MyEventExtended());
+        assertEquals(3, countObjectEvent);
+        assertEquals(2, countMyEvent);
+        assertEquals(1, countMyEventExtended);
     }
 
     @Test

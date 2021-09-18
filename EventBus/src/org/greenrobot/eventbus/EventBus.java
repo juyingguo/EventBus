@@ -73,6 +73,8 @@ public class EventBus {
     private final boolean sendSubscriberExceptionEvent;
     private final boolean sendNoSubscriberEvent;
     private final boolean eventInheritance;
+    /** debug print switch */
+    private final boolean printEventBus;
 
     private final int indexCount;
     private final Logger logger;
@@ -128,6 +130,7 @@ public class EventBus {
         throwSubscriberException = builder.throwSubscriberException;
         eventInheritance = builder.eventInheritance;
         executorService = builder.executorService;
+        printEventBus = builder.printEventBus;
     }
 
     /**
@@ -141,6 +144,8 @@ public class EventBus {
     public void register(Object subscriber) {
         Class<?> subscriberClass = subscriber.getClass();
         List<SubscriberMethod> subscriberMethods = subscriberMethodFinder.findSubscriberMethods(subscriberClass);
+        if (printEventBus)
+            logger.log(Level.FINE, EventBus.TAG + " register(.) call for subscriber:" + subscriber.getClass() + " findSubscriberMethods num:" + subscriberMethods.size());
         synchronized (this) {
             for (SubscriberMethod subscriberMethod : subscriberMethods) {
                 subscribe(subscriber, subscriberMethod);
@@ -150,6 +155,8 @@ public class EventBus {
 
     // Must be called in synchronized block
     private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
+        if (printEventBus)
+            logger.log(Level.FINE, EventBus.TAG + " subscribe(..) call for subscriber:" + subscriber.getClass() + " subscriberMethod.method.getName():" + subscriberMethod.method.getName());
         Class<?> eventType = subscriberMethod.eventType;
         Subscription newSubscription = new Subscription(subscriber, subscriberMethod);
         CopyOnWriteArrayList<Subscription> subscriptions = subscriptionsByEventType.get(eventType);
@@ -305,6 +312,8 @@ public class EventBus {
         synchronized (stickyEvents) {
             stickyEvents.put(event.getClass(), event);
         }
+        if (printEventBus)
+            logger.log(Level.FINE, "postSticky for event class:" + event.getClass() + " stickyEvents.size():" + stickyEvents.size());
         // Should be posted after it is putted, in case the subscriber wants to remove immediately
         post(event);
     }

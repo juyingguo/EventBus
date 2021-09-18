@@ -59,7 +59,8 @@ public abstract class AbstractEventBusTest {
     @Before
     public void setUpBase() throws Exception {
         EventBus.clearCaches();
-        eventBus = new EventBus();
+//        eventBus = new EventBus();
+        eventBus = EventBus.builder().printEventBus(true).build();
     }
 
     protected void waitForEventCount(int expectedCount, int maxMillis) {

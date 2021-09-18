@@ -25,8 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 class SubscriberMethodFinder {
+    private String TAG = "SubscriberMethodFinder";
     /*
      * In newer class files, compilers may add methods. Those are called bridge or synthetic methods.
      * EventBus must ignore both. There modifiers are not public but defined in the Java class file format:
@@ -63,6 +65,7 @@ class SubscriberMethodFinder {
         } else {
             subscriberMethods = findUsingInfo(subscriberClass);
         }
+        Logger.Default.get().log(Level.FINE, TAG+ " findSubscriberMethods subscriberMethods number size:" + subscriberMethods.size());
         if (subscriberMethods.isEmpty()) {
             throw new EventBusException("Subscriber " + subscriberClass
                     + " and its super classes have no public methods with the @Subscribe annotation");
@@ -73,6 +76,7 @@ class SubscriberMethodFinder {
     }
 
     private List<SubscriberMethod> findUsingInfo(Class<?> subscriberClass) {
+        Logger.Default.get().log(Level.FINE, TAG + " findUsingInfo for " + subscriberClass);
         FindState findState = prepareFindState();
         findState.initForSubscriber(subscriberClass);
         while (findState.clazz != null) {
