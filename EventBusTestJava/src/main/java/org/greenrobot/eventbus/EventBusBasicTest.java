@@ -124,7 +124,7 @@ public class EventBusBasicTest extends AbstractEventBusTest {
         MyEvent event = new MyEvent();
         int count = 1000;
         long start = System.currentTimeMillis();
-        // Debug.startMethodTracing("testPostMultipleTimes" + count);
+//         Debug.startMethodTracing("testPostMultipleTimes" + count);
         for (int i = 0; i < count; i++) {
             eventBus.post(event);
         }

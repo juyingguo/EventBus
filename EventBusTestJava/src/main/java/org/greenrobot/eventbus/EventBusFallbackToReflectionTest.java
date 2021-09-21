@@ -27,6 +27,7 @@ public class EventBusFallbackToReflectionTest extends AbstractEventBusTest {
     public class PublicClass {
         @Subscribe
         public void onEvent(Object any) {
+            System.out.println("onEvent,any:" + any);
             trackEvent(any);
         }
     }
@@ -95,6 +96,7 @@ public class EventBusFallbackToReflectionTest extends AbstractEventBusTest {
         Object subscriber = new PublicClass() {
             @Subscribe
             public void onEvent(String event) {
+                System.out.println("onEvent,event:" + event);
                 trackEvent(event);
             }
         };
@@ -104,7 +106,14 @@ public class EventBusFallbackToReflectionTest extends AbstractEventBusTest {
         assertEquals("Hello", lastEvent);
         assertEquals(2, eventsReceived.size());
     }
+    @Test
+    public void testSubscriberClassWithPublicClass() {
+        eventBus.register(new PublicClass());
 
+        eventBus.post("Hello");
+        assertEquals("Hello", lastEvent);
+        assertEquals(1, eventsReceived.size());
+    }
     @Test
     public void testAnonymousSubscriberClassWithPrivateSuperclass() {
         eventBus.register(new PublicWithPrivateSuperClass());
