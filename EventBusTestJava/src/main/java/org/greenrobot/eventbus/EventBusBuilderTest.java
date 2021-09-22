@@ -19,6 +19,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 /**
@@ -36,7 +37,9 @@ public class EventBusBuilderTest extends AbstractEventBusTest {
             fail("Should have thrown");
         } catch (EventBusException e) {
             // Expected
+            System.out.println(e);
         }
+        assertNull(lastEvent);
     }
 
     @Test
@@ -69,6 +72,7 @@ public class EventBusBuilderTest extends AbstractEventBusTest {
             fail("Should have thrown");
         } catch (EventBusException e) {
             // Expected
+            System.out.println(e);
         }
     }
 
