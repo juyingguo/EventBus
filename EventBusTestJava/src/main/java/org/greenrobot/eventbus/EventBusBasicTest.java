@@ -71,6 +71,14 @@ public class EventBusBasicTest extends AbstractEventBusTest {
         assertNotEquals(event, lastStringEventForMultiParamSubscriberMethod);
     }
     @Test
+    public void testRegisterSubscriberMultipleMethods() {
+        String event = "Hello";
+        eventBus.register(this);
+        eventBus.post(event);
+
+        assertEquals(event, lastStringEvent);
+    }
+    @Test
     public void testPostWithoutSubscriber() {
         eventBus.post("Hello");
     }
@@ -249,10 +257,13 @@ public class EventBusBasicTest extends AbstractEventBusTest {
         lastIntEvent = event;
         countIntEvent++;
     }
-    @Subscribe
-    public void onEvent(String event,String str) {
-        lastStringEventForMultiParamSubscriberMethod = event;
-    }
+//    /** {org.greenrobot.eventbus.annotationprocessor.EventBusAnnotationProcessor#checkHasNoErrors(javax.lang.model.element.ExecutableElement, javax.annotation.processing.Messager)}
+//     *  check.
+//     **/
+//    @Subscribe
+//    public void onEvent(String event,String str) {
+//        lastStringEventForMultiParamSubscriberMethod = event;
+//    }
     @Subscribe
     public void onEvent(MyEvent event) {
         countMyEvent++;

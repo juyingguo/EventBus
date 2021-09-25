@@ -65,7 +65,8 @@ class SubscriberMethodFinder {
         } else {
             subscriberMethods = findUsingInfo(subscriberClass);
         }
-        Logger.Default.get().log(Level.FINE, TAG+ " findSubscriberMethods subscriberMethods number size:" + subscriberMethods.size());
+        if (EventBus.sDebugToggle)
+            Logger.Default.get().log(Level.FINE, TAG+ " findSubscriberMethods subscriberMethods number size:" + subscriberMethods.size());
         if (subscriberMethods.isEmpty()) {
             throw new EventBusException("Subscriber " + subscriberClass
                     + " and its super classes have no public methods with the @Subscribe annotation");
@@ -76,7 +77,8 @@ class SubscriberMethodFinder {
     }
 
     private List<SubscriberMethod> findUsingInfo(Class<?> subscriberClass) {
-        Logger.Default.get().log(Level.FINE, TAG + " findUsingInfo for " + subscriberClass);
+        if (EventBus.sDebugToggle)
+            Logger.Default.get().log(Level.FINE, TAG + " findUsingInfo for " + subscriberClass);
         FindState findState = prepareFindState();
         findState.initForSubscriber(subscriberClass);
         while (findState.clazz != null) {
@@ -171,6 +173,8 @@ class SubscriberMethodFinder {
             }
             findState.skipSuperClasses = true;
         }
+        if (EventBus.sDebugToggle)
+            Logger.Default.get().log(Level.FINE, TAG + " findUsingReflectionInSingleClass,methods size:" + methods.length);
         for (Method method : methods) {
             int modifiers = method.getModifiers();
             if ((modifiers & Modifier.PUBLIC) != 0 && (modifiers & MODIFIERS_IGNORE) == 0) {
@@ -203,6 +207,7 @@ class SubscriberMethodFinder {
     }
 
     static class FindState {
+        private String TAG = "FindState";
         final List<SubscriberMethod> subscriberMethods = new ArrayList<>();
         final Map<Class, Object> anyMethodByEventType = new HashMap<>();
         final Map<String, Class> subscriberClassByMethodKey = new HashMap<>();
@@ -231,13 +236,19 @@ class SubscriberMethodFinder {
         }
 
         boolean checkAdd(Method method, Class<?> eventType) {
+            if (EventBus.sDebugToggle)
+                Logger.Default.get().log(Level.FINE, TAG + " checkAdd for method:" + method.getName() + " eventType:" + eventType);
             // 2 level check: 1st level with event type only (fast), 2nd level with complete signature when required.
             // Usually a subscriber doesn't have methods listening to the same event type.
             Object existing = anyMethodByEventType.put(eventType, method);
+            if (EventBus.sDebugToggle)
+                Logger.Default.get().log(Level.FINE, TAG + " checkAdd existing:" + existing);
             if (existing == null) {
                 return true;
             } else {
                 if (existing instanceof Method) {
+                    if (EventBus.sDebugToggle)
+                        Logger.Default.get().log(Level.FINE, TAG + " checkAdd [existing instanceof Method].");
                     if (!checkAddWithMethodSignature((Method) existing, eventType)) {
                         // Paranoia check
                         throw new IllegalStateException();
@@ -257,6 +268,8 @@ class SubscriberMethodFinder {
             String methodKey = methodKeyBuilder.toString();
             Class<?> methodClass = method.getDeclaringClass();
             Class<?> methodClassOld = subscriberClassByMethodKey.put(methodKey, methodClass);
+            if (EventBus.sDebugToggle)
+                Logger.Default.get().log(Level.FINE, TAG + " checkAddWithMethodSignature methodClassOld:" + methodClassOld);
             if (methodClassOld == null || methodClassOld.isAssignableFrom(methodClass)) {
                 // Only add if not already found in a sub class
                 return true;

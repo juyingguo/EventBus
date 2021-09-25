@@ -75,6 +75,8 @@ public class EventBus {
     private final boolean eventInheritance;
     /** debug print switch */
     private final boolean printEventBus;
+    /** debug print switch static for EventBus,init together with {@link #printEventBus}*/
+    public static boolean sDebugToggle;
 
     private final int indexCount;
     private final Logger logger;
@@ -131,6 +133,7 @@ public class EventBus {
         eventInheritance = builder.eventInheritance;
         executorService = builder.executorService;
         printEventBus = builder.printEventBus;
+        sDebugToggle = printEventBus;
     }
 
     /**

@@ -33,7 +33,7 @@ public class EventBusBuilderTest extends AbstractEventBusTest {
         eventBus.register(new SubscriberExceptionEventTracker());
         eventBus.register(new ThrowingSubscriber());
         try {
-            eventBus.post("Foo");
+//            eventBus.post("Foo");
             fail("Should have thrown");
         } catch (EventBusException e) {
             // Expected
