@@ -159,7 +159,8 @@ public class EventBus {
     // Must be called in synchronized block
     private void subscribe(Object subscriber, SubscriberMethod subscriberMethod) {
         if (printEventBus)
-            logger.log(Level.FINE, EventBus.TAG + " subscribe(..) call for subscriber:" + subscriber.getClass() + " subscriberMethod.method.getName():" + subscriberMethod.method.getName());
+            logger.log(Level.FINE, EventBus.TAG + " subscribe(..) call for subscriber:" + subscriber.getClass() + " subscriberMethod.method.getName():" + subscriberMethod.method.getName()
+                        + " subscriberMethod.eventType:" + subscriberMethod.eventType);
         Class<?> eventType = subscriberMethod.eventType;
         Subscription newSubscription = new Subscription(subscriber, subscriberMethod);
         CopyOnWriteArrayList<Subscription> subscriptions = subscriptionsByEventType.get(eventType);
@@ -180,7 +181,6 @@ public class EventBus {
                 break;
             }
         }
-
         List<Class<?>> subscribedEvents = typesBySubscriber.get(subscriber);
         if (subscribedEvents == null) {
             subscribedEvents = new ArrayList<>();
@@ -263,6 +263,8 @@ public class EventBus {
 
     /** Posts the given event to the event bus. */
     public void post(Object event) {
+        if (printEventBus)
+            logger.log(Level.FINE, EventBus.TAG + " post(.) event.getClass():" + event.getClass());
         PostingThreadState postingState = currentPostingThreadState.get();
         List<Object> eventQueue = postingState.eventQueue;
         eventQueue.add(event);
@@ -389,11 +391,15 @@ public class EventBus {
     }
 
     private void postSingleEvent(Object event, PostingThreadState postingState) throws Error {
+        if (printEventBus)
+            logger.log(Level.FINE, EventBus.TAG + " postSingleEvent(..) event:"  + event+  " event.getClass():" + event.getClass());
         Class<?> eventClass = event.getClass();
         boolean subscriptionFound = false;
         if (eventInheritance) {
             List<Class<?>> eventTypes = lookupAllEventTypes(eventClass);
             int countTypes = eventTypes.size();
+            if (printEventBus)
+                logger.log(Level.FINE, EventBus.TAG + " postSingleEvent(..) countTypes:" + countTypes);
             for (int h = 0; h < countTypes; h++) {
                 Class<?> clazz = eventTypes.get(h);
                 subscriptionFound |= postSingleEventForEventType(event, postingState, clazz);
@@ -401,6 +407,8 @@ public class EventBus {
         } else {
             subscriptionFound = postSingleEventForEventType(event, postingState, eventClass);
         }
+        if (printEventBus)
+            logger.log(Level.FINE, EventBus.TAG + " postSingleEvent(..) subscriptionFound:" + subscriptionFound);
         if (!subscriptionFound) {
             if (logNoSubscriberMessages) {
                 logger.log(Level.FINE, "No subscribers registered for event " + eventClass);
@@ -417,6 +425,8 @@ public class EventBus {
         synchronized (this) {
             subscriptions = subscriptionsByEventType.get(eventClass);
         }
+        if (printEventBus)
+            logger.log(Level.FINE, EventBus.TAG + " postSingleEventForEventType(...) subscriptions size:" + (subscriptions == null ? 0 : subscriptions.size()));
         if (subscriptions != null && !subscriptions.isEmpty()) {
             for (Subscription subscription : subscriptions) {
                 postingState.event = event;
@@ -482,6 +492,8 @@ public class EventBus {
                 eventTypes = new ArrayList<>();
                 Class<?> clazz = eventClass;
                 while (clazz != null) {
+                    if (EventBus.sDebugToggle)
+                        Logger.Default.get().log(Level.FINE, TAG + " lookupAllEventTypes,eventClass:" + eventClass);
                     eventTypes.add(clazz);
                     addInterfaces(eventTypes, clazz.getInterfaces());
                     clazz = clazz.getSuperclass();
@@ -496,6 +508,8 @@ public class EventBus {
     static void addInterfaces(List<Class<?>> eventTypes, Class<?>[] interfaces) {
         for (Class<?> interfaceClass : interfaces) {
             if (!eventTypes.contains(interfaceClass)) {
+                if (EventBus.sDebugToggle)
+                    Logger.Default.get().log(Level.FINE, TAG + " addInterfaces,interfaceClass:" + interfaceClass);
                 eventTypes.add(interfaceClass);
                 addInterfaces(eventTypes, interfaceClass.getInterfaces());
             }
